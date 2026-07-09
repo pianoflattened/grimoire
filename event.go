@@ -54,8 +54,8 @@ func (m *events) handleLine(line string) {
 			
 			var fn string
 			switch filepath.Ext(e.Name()) {
-			case ".js": fn = "aj"
-			case ".css": fn = "ac"
+			case ".js": fn = "j"
+			case ".css": fn = "c"
 			default: continue}
 
 			path := filepath.Join(dir, e.Name())

@@ -1,5 +1,5 @@
-if (typeof window.__grimoirelistener !== "undefined") {
-    try {browser.tabs.onUpdated.removeListener(window.__grimoirelistener);}
+if (typeof window.gl !== "undefined") {
+    try {browser.tabs.onUpdated.removeListener(window.gl);}
     catch (e) {}
 }
 
@@ -10,16 +10,16 @@ const listener = async (tabId, changeInfo, tab) => {
 }
 
 browser.tabs.onUpdated.addListener(listener);
-window.__grimoirelistener = listener;
+window.gl = listener;
 
-aj = function(code, tabId) {
+j = function(code, tabId) {
     browser.tabs.executeScript(tabId, {code: code});
     return "OK";
-}; window.aj = aj;
+}; window.j = j;
 
-ac = function(code, tabId) {
+c = function(code, tabId) {
     browser.tabs.insertCSS(tabId, {code: code});
     return "OK";
-}; window.ac = ac;
+}; window.c = c;
 
 "OK";
