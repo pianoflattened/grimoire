@@ -1,0 +1,7 @@
+socket = "/tmp/beval.socket.0"
+reconnect = 500
+debounce = 100
+
+# [[spell]]
+# pattern = "*.example.com/*"
+# dir = "sites/example"
