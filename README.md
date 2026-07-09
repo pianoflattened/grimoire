@@ -25,14 +25,14 @@ containing the executable, you will find it has spit out `defaults.toml`--
 ```toml
 # if you're seeing this, you need to write a config file!!
 # put a file named `conf.toml' in the same directory as your executable and
-# fill it out as the example is done here and then "uncomment" (remove #s from) 
-# the lines to get this program sending scripts to firefox
+# fill it out as the example is done here  to get this program sending 
+# scripts to firefox
 
 refresh = 100
 
-# [[spell]]
-# pattern = "*.example.com/*"
-# dir = "sites/example"
+[[spell]]
+pattern = "*.example.com/*"
+dir = "sites/example"
 ```
 the program does not like to read from this config--it is a backup that it 
 produces on failure to find your config. as the comments explain, you should
