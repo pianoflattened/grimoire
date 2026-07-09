@@ -13,43 +13,49 @@ import (
 )
 
 type events struct {
-	mu      sync.Mutex
-	spells  []spell
-	write   chan string
-	ack     chan struct{}
+	mu     sync.Mutex
+	routes []route
+	ch     chan string
 }
 
-func (m *events) sayok() {
-	select {
-	case m.ack <- struct{}{}:
-	default: }
+func (m *events) spelldirs(url string) []string {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	var dirs []string
+	for _, rt := range m.routes {
+		if rt.match(url) {dirs = append(dirs, rt.dir)}}
+	
+	return dirs
 }
 
-func (m *events) handleLine(line string) {
+func (m *events) doline(line string) {
 	parts := strings.SplitN(line, ";", 3)
 	if len(parts) != 3 || parts[0] != "NEWPAGE" {
 		log.Printf("unrecognized message: %q", line)
 		return}
 
-	urlbs, err := base64.StdEncoding.DecodeString(parts[1])
+	urlBytes, err := base64.StdEncoding.DecodeString(parts[1])
 	if err != nil {
 		log.Printf("bad base64 in NEWPAGE: %v", err)
 		return}
 	
-	url := string(urlbs)
+	url := string(urlBytes)
 
-	tabid := strings.TrimSpace(parts[2])
-	if !isnum(tabid) {
-		log.Printf("bad tabId in NEWPAGE (%q)", parts[2])
+	tabID := strings.TrimSpace(parts[2])
+	if !isnum(tabID) {
+		log.Printf("bad tabid in NEWPAGE (%q)", parts[2])
 		return}
 
 	for _, dir := range m.spelldirs(url) {
+		log.Printf("%+v", dir)
+
 		entries, err := os.ReadDir(dir)
 		if err != nil {
 			log.Printf("read dir %s failed: %v", dir, err)
 			continue}
 		
 		for _, e := range entries {
+			log.Printf("%+v", e)
 			if e.IsDir() {continue}
 			
 			var fn string
@@ -64,14 +70,15 @@ func (m *events) handleLine(line string) {
 				log.Printf("read %s failed: %v", path, err)
 				continue}
 
-			esc, err := json.Marshal(string(data))
+			escaped, err := json.Marshal(string(data))
 			if err != nil {
 				log.Printf("build call for %s failed: %v", path, err)
 				continue}
 
+			msg := fmt.Sprintf("%s(%s, %s);", fn, escaped, tabID)
 			select {
-			case m.write <- fmt.Sprintf("%s(%s, %s);", fn, esc, tabid):
-			case <-time.After(2 * time.Second): log.Printf("write channel stalled; dropping payload")}
+			case m.ch <- msg:
+			case <-time.After(2*time.Second): log.Printf("write channel stalled; dropping payload")}
 		}
 	}
 }

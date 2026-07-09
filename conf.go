@@ -8,67 +8,50 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
+	
 	"github.com/BurntSushi/toml"
 	"github.com/fsnotify/fsnotify"
 )
 
-type config struct {
-	SocketPath string        `toml:"socket"`
-	Reconnect  int           `toml:"reconnect"` // ms
-	Debounce   int           `toml:"debounce"`  // ms
-	Routes     []RouteConfig `toml:"spell"`
+type conf struct {
+	Refresh int     `toml:"refresh"`
+	Spells  []Spell `toml:"spell"`
 }
 
-type RouteConfig struct {
-	Pattern string `toml:"pattern"` // substring or glob w/ '*'
-	Dir     string `toml:"dir"`     // dir w/ js/css files
+type Spell struct {
+	Patt string `toml:"pattern"` // substring or glob w/ '*'
+	Dir  string `toml:"dir"`     // dir w/ js/css files
 }
 
-type spell struct {
+type route struct {
 	dir   string
 	match func(string) bool
 }
 
-func (c config) rcdelay() time.Duration {
-	if c.Reconnect <= 0 {return 500*time.Millisecond}
-	return time.Duration(c.Reconnect)*time.Millisecond
-}
-
-func (c config) dbdelay() time.Duration {
-	if c.Debounce <= 0 {return 100*time.Millisecond}
-	return time.Duration(c.Debounce)*time.Millisecond
-}
-
-func loadconf(path string) (config, error) {
-	var cfg config
-	_, err := toml.DecodeFile(path, &cfg)
-	if err != nil {return cfg, err}
-	if cfg.SocketPath == "" {return cfg, fmt.Errorf("config: socket is required")}
-	return cfg, nil
-}
-
-func (m *events) refreshspells(cfgs []RouteConfig) error {
-	spells := make([]spell, 0, len(cfgs))
+func (m *events) refreshspells(cfgs []Spell) error {
+	routes := make([]route, 0, len(cfgs))
 	for _, rc := range cfgs {
-		matcher, err := compilepatt(rc.Pattern)
-		if err != nil {return err}
-		spells = append(spells, spell{dir: rc.Dir, match: matcher})
+		matcher, err := compilepatt(rc.Patt)
+		if err != nil {
+			return err
+		}
+		routes = append(routes, route{dir: rc.Dir, match: matcher})
 	}
 	m.mu.Lock()
-	m.spells = spells
+	m.routes = routes
 	m.mu.Unlock()
 	return nil
 }
 
-func (m *events) spelldirs(url string) []string {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	var dirs []string
-	for _, rt := range m.spells {
-		if rt.match(url) {dirs = append(dirs, rt.dir)}
-	}
-	return dirs
+func (c conf) refreshdelay() time.Duration {
+	if c.Refresh <= 0 {return 100*time.Millisecond}
+	return time.Duration(c.Refresh)*time.Millisecond
+}
+
+func loadconf(path string) (conf, error) {
+	var cfg conf
+	_, err := toml.DecodeFile(path, &cfg)
+	return cfg, err
 }
 
 func compilepatt(patt string) (func(string) bool, error) {
@@ -86,13 +69,14 @@ func compilepatt(patt string) (func(string) bool, error) {
 	return re.MatchString, nil
 }
 
-func watchconf(ctx context.Context, path string, debounce time.Duration, onchange func(config)) {
+func watchconf(ctx context.Context, path string, debounce time.Duration, onchange func(conf)) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {log.Fatalf("config watcher: %v", err)}
 	defer watcher.Close()
 
 	dir := filepath.Dir(path)
-	if err := watcher.Add(dir); err != nil {log.Fatalf("watch config dir %s: %v", dir, err)}
+	if err := watcher.Add(dir); err != nil {
+		log.Fatalf("watch config dir %s: %v", dir, err)}
 
 	var timer *time.Timer
 	for {
@@ -122,3 +106,4 @@ func watchconf(ctx context.Context, path string, debounce time.Duration, onchang
 		}
 	}
 }
+
