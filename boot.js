@@ -13,12 +13,18 @@ browser.tabs.onUpdated.addListener(listener);
 window.gl = listener;
 
 j = function(code, tabId) {
-    browser.tabs.executeScript(tabId, {code: code});
+    browser.tabs.executeScript(tabId, {
+        code: code,
+        runAt: "document_start"
+    });
     return "OK";
 }; window.j = j;
 
 c = function(code, tabId) {
-    browser.tabs.insertCSS(tabId, {code: code});
+    browser.tabs.insertCSS(tabId, {
+        code: code,
+        runAt: "document_start"
+    });
     return "OK";
 }; window.c = c;
 
