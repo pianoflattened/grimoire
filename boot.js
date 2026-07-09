@@ -1,4 +1,4 @@
-if (typeof window.rec === "undefined") {window.rec = {}};
+if (typeof window.rec === "undefined") window.rec = {};
 if (typeof window.gl !== "undefined") {
     try {browser.tabs.onUpdated.removeListener(window.gl);}
     catch (e) {}
@@ -15,8 +15,7 @@ browser.tabs.onUpdated.addListener(listener);
 window.gl = listener;
 
 j = function(code, tabId) {
-    const hash = btoa(code);
-    if (typeof window.rec[tabId][hash] === "undefined") {
+    if (typeof window.rec[tabId][code] === "undefined") {
         window.rec[tabId][hash] = true;
         browser.tabs.executeScript(tabId, {
             code: code,
@@ -27,8 +26,7 @@ j = function(code, tabId) {
 }; window.j = j;
 
 c = function(code, tabId) {
-    const hash = btoa(code);
-    if (typeof window.rec[tabId][hash] === "undefined") {
+    if (typeof window.rec[tabId][code] === "undefined") {
         browser.tabs.insertCSS(tabId, {
             code: code,
             runAt: "document_start"
