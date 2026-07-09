@@ -1,4 +1,4 @@
-if (typeof window.record === "undefined") {window.rec = {}};
+if (typeof window.rec === "undefined") {window.rec = {}};
 if (typeof window.gl !== "undefined") {
     try {browser.tabs.onUpdated.removeListener(window.gl);}
     catch (e) {}
