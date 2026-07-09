@@ -1,0 +1,7 @@
+{
+  "name": "beval",
+  "description": "browser eval native messaging host script",
+  "path": "/path/to/grimoire/grimoire",
+  "type": "stdio",
+  "allowed_extensions": [ "beval@h43z" ]
+}

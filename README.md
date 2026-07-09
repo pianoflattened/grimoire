@@ -25,7 +25,7 @@ containing the executable, you will find it has spit out `defaults.toml`--
 ```toml
 # if you're seeing this, you need to write a config file!!
 # put a file named `conf.toml' in the same directory as your executable and
-# fill it out as the example is done here  to get this program sending 
+# fill it out as the example is done here to get this program sending 
 # scripts to firefox
 
 refresh = 100
