@@ -6,21 +6,6 @@ reloaded" (? if this is correct usage of the buzzword?) on a page refresh, so
 once you get this set up you shouldn't have to think about what's going on 
 with it at all and you can Just Program
 
-# !!!! WARNING !!!!
-this program works as a drop-in replacement for h43z's native messaging client,
-which creates a unix pipe and directs all input and output of the extensions
-context through that pipe. this uses its dumb (only meaning that it takes any 
-string recieved from its native app and evals it without thinking) browser-side 
-background script and uses it as an injection point for locally hosted 
-userscripts. taking away the funny unix pipe SHOULD make this work easily enough 
-for windows and mac. i am not remotely well-studied in this kind of topic but
-this kind of setup seems irredeemably bad from a security standpoint. so if you
-are going to use it i would take care only to do it on a personal machine that
-you share with no one. i believe the license this software comes with already
-absolves me of it, but i will reiterate that part of it: i am not responsible
-for whatever malicious scripts you might accidentally give access to your web
-browser using this tool
-
 # usage
 this only works with firefox! first you want to install the [extension][ext].
 once you have that installed, you can download or clone the repo anywhere you
@@ -52,6 +37,21 @@ not even have to specify it, if you like; the program will provide a default
 value. if you set it to 0, your program will usually see 2 or 3 quick writes to 
 any newly saved file, as that is usually just what a text editor does--so you
 do want to have Some number there. but i wouldn't worry too much about it
+
+#@ !!!! WARNING !!!!
+this program works as a drop-in replacement for h43z's native messaging client,
+which creates a unix pipe and directs all input and output of the extensions
+context through that pipe. this uses its dumb (only meaning that it takes any 
+string recieved from its native app and evals it without thinking) browser-side 
+background script and uses it as an injection point for locally hosted 
+userscripts. taking away the funny unix pipe SHOULD make this work easily enough 
+for windows and mac. i am not remotely well-studied in this kind of topic but
+this kind of setup seems irredeemably bad from a security standpoint. so if you
+are going to use it i would take care only to do it on a personal machine that
+you share with no one. i believe the license this software comes with already
+absolves me of it, but i will reiterate that part of it: i am not responsible
+for whatever malicious scripts you might accidentally give access to your web
+browser using this tool
 
 [beval]: https://github.com/h43z/beval
 [ext]: https://addons.mozilla.org/en-US/firefox/addon/beval/
