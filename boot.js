@@ -16,7 +16,7 @@ window.gl = listener;
 
 j = function(code, tabId) {
     if (typeof window.rec[tabId][code] === "undefined") {
-        window.rec[tabId][hash] = true;
+        window.rec[tabId][code] = true;
         browser.tabs.executeScript(tabId, {
             code: code,
             runAt: "document_start"
@@ -27,6 +27,7 @@ j = function(code, tabId) {
 
 c = function(code, tabId) {
     if (typeof window.rec[tabId][code] === "undefined") {
+        window.rec[tabId][code] = true;
         browser.tabs.insertCSS(tabId, {
             code: code,
             runAt: "document_start"
