@@ -23,6 +23,7 @@ func (m *events) spelldirs(url string) []string {
 	defer m.mu.Unlock()
 	var dirs []string
 	for _, rt := range m.routes {
+		log.Print(rt.dir)
 		if rt.match(url) {dirs = append(dirs, rt.dir)}}
 	
 	return dirs

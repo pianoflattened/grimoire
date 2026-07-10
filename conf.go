@@ -15,6 +15,7 @@ import (
 
 type conf struct {
 	Refresh int     `toml:"refresh"`
+	Basedir string  `toml:"base"`
 	Spells  []Spell `toml:"spell"`
 }
 
@@ -28,14 +29,17 @@ type route struct {
 	match func(string) bool
 }
 
-func (m *events) refreshspells(cfgs []Spell) error {
-	routes := make([]route, 0, len(cfgs))
-	for _, rc := range cfgs {
+func (m *events) refreshspells(cfg conf) error {
+	routes := make([]route, 0, len(cfg.Spells))
+	for _, rc := range cfg.Spells {
 		matcher, err := compilepatt(rc.Patt)
 		if err != nil {
 			return err
 		}
-		routes = append(routes, route{dir: rc.Dir, match: matcher})
+		routes = append(routes, route{
+			dir: filepath.Join(cfg.Basedir, rc.Dir), 
+			match: matcher,
+		})
 	}
 	m.mu.Lock()
 	m.routes = routes
@@ -55,6 +59,7 @@ func loadconf(path string) (conf, error) {
 }
 
 func compilepatt(patt string) (func(string) bool, error) {
+	if patt == "" {return func(s string) bool {return false}, nil}
 	if !strings.Contains(patt, "*") {
 		return func(url string) bool {return strings.Contains(url, patt) }, nil}
 	

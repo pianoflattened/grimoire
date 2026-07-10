@@ -43,10 +43,10 @@ func main() {
 		cancel()}()
 
 	mgr := &events{ch: make(chan string, 64)}
-	if err := mgr.refreshspells(cfg.Spells); err != nil {log.Fatalf("initial routes: %v", err)}
+	if err := mgr.refreshspells(cfg); err != nil {log.Fatalf("initial routes: %v", err)}
 
 	go watchconf(ctx, confpath, cfg.refreshdelay(), func(newcfg conf) {
-		if err := mgr.refreshspells(newcfg.Spells); err != nil {
+		if err := mgr.refreshspells(newcfg); err != nil {
 			log.Printf("route reload rejected: %v", err)
 			return}
 		
