@@ -19,8 +19,8 @@ type conf struct {
 }
 
 type Spell struct {
-	Patt string `toml:"pattern"` // substring or glob w/ '*'
-	Dir  string `toml:"dir"`     // dir w/ js/css files
+	Patt string `toml:"site"` // substring or glob w/ '*'
+	Dir  string `toml:"dir"`  // dir w/ js/css files
 }
 
 type route struct {

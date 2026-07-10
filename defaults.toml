@@ -6,5 +6,5 @@
 refresh = 100
 
 [[spell]]
-pattern = "*.example.com/*"
+site = "*.example.com/*"
 dir = "sites/example"

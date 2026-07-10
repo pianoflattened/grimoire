@@ -31,7 +31,7 @@ containing the executable, you will find it has spit out `defaults.toml`--
 refresh = 100
 
 [[spell]]
-pattern = "*.example.com/*"
+site = "*.example.com/*"
 dir = "sites/example"
 ```
 the program does not like to read from this config--it is a backup that it 
@@ -40,8 +40,8 @@ create a `conf.toml` to put right next to your executable. this is where you
 will explain to it what scripts should be used on what websites
 
 the main thing you will be doing in `conf.toml` is adding "spells". you tell it
-"on `pattern` kind of url, i want to load the files in `dir` folder". if you
-don't know how toml works, each new entry has to have `[[spell]]` as a header.
+"on `site` kind of url, i want to load the files in `dir` folder". if you don't
+know how toml works, each new entry has to have `[[spell]]` as a header. 
 `refresh` is an optional setting that controls the amount of time that the 
 program will wait before responding to a second edit right after a first one, 
 in milliseconds. if you set it to 0, your program will usually see 2 or 3 quick 
